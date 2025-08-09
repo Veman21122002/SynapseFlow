@@ -6,6 +6,7 @@ from langchain_core.messages import SystemMessage,HumanMessage,BaseMessage
 from typing import TypedDict,Annotated,Literal
 from langgraph.graph.message import add_messages
 
+load_dotenv()
 #state
 class ChatState(TypedDict):
     messages: Annotated[list[BaseMessage],add_messages] 
@@ -36,16 +37,3 @@ graph.add_edge('chat_node',END)
 
 workflow = graph.compile(checkpointer=checkpointer)
 
-
-thread_id = '1'
-
-while True:
-    usermessage = input('How can I help you today?')
-
-    if usermessage.strip().lower() in ['exit','quit','bye']:
-        break
-
-    config = {'configurable':{'thread_id':thread_id}}
-    response = workflow.invoke({'messages':[HumanMessage(content=usermessage)]},config=config)
-
-    print('AI',response['messages'][-1].content)
